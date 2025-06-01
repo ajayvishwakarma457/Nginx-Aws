@@ -1,0 +1,57 @@
+
+✅ 1. Nginx Usage in MNCs
+
+    * Reverse proxy for backend apps (Node.js, Python, Java, etc.)
+    * Load balancing across multiple app servers or containers
+    * TLS/SSL termination (HTTPS via Let's Encrypt or enterprise certs)
+    * Caching for static content or API responses
+    * Rate limiting & security filtering
+    * Serving static frontend apps (React, Angular, etc.)
+
+
+🧰 2. Common Nginx Load Balancer Configurations
+
+    🔁 Round-Robin Load Balancing
+    Default method – used to distribute traffic equally:
+
+        upstream app_servers {
+            server 10.0.1.10:3000;
+            server 10.0.1.11:3000;
+        }
+
+    💡 IP Hash (Sticky Sessions)
+     Useful for apps with session state stored locally:
+
+            💡 IP Hash (Sticky Sessions)
+            Useful for apps with session state stored locally:
+
+                upstream app_servers {
+                    ip_hash;
+                    server 10.0.1.10:3000;
+                    server 10.0.1.11:3000;
+                }
+
+    ⚙️ Health Checks (Using Nginx Plus or 3rd-party)
+    To automatically skip failed app servers (built-in with Nginx Plus or via external health check tools)
+
+    🔐 SSL Termination
+    MNCs often terminate SSL at the load balancer:
+
+        server {
+            listen 443 ssl;
+            ssl_certificate /etc/ssl/certs/domain.crt;
+            ssl_certificate_key /etc/ssl/private/domain.key;
+
+            location / {
+                proxy_pass http://app_servers;
+            }
+        }
+
+    🔄 Blue-Green / Canary Deployments
+    Use Nginx to route a small percentage of traffic to new versions:
+
+        upstream app_servers {
+            server 10.0.1.10:3000 weight=9;
+            server 10.0.1.12:3000 weight=1;  # Canary version
+        }
+
