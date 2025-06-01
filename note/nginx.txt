@@ -91,6 +91,10 @@ For Ubuntu (e.g., Ubuntu Server 20.04 LTS, 22.04 LTS)
                 sudo nginx -t
                 sudo systemctl reload nginx
 
+        16. For Loadbalancer 
+            pm2 start app.js --name app-3000 -- --port=3000
+            pm2 start app.js --name app-3001 -- --port=3001
+
 
 
 

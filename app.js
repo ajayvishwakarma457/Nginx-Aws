@@ -20,7 +20,7 @@ const port = argv.port || process.env.PORT || 3000;
 // Route for the root URL ("/")
 app.get('/', (req, res) => {
   // When someone visits '/', send back the text 'Hello from Express!'
-  res.send('Hello from Express!');
+  res.send(`Hello from port ${port}`);
 });
 
 // Another route for "/about"
