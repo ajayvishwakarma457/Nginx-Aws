@@ -2,12 +2,15 @@
 
 // 1. Import the Express module
 const express = require('express');
+require('dotenv').config();
+
 
 // 2. Create an Express application instance
 const app = express();
 
 // 3. Define the port your server will listen on
-const port = 3000; // You can choose any available port, common ones are 3000, 8080, 5000
+// const port = 3000; // You can choose any available port, common ones are 3000, 8080, 5000
+const port = process.env.PORT || 3000;
 
 // 4. Define your routes (how your application responds to different URL paths)
 

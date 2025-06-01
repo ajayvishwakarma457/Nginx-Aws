@@ -1,0 +1,96 @@
+For Ubuntu (e.g., Ubuntu Server 20.04 LTS, 22.04 LTS)
+
+    If your EC2 instance uses Ubuntu:
+
+        1. SSH into your EC2 instance.
+
+        2. Update your system's package list:
+            Bash:
+            sudo apt update -y
+
+        3. Install Nginx:
+            Bash:
+                sudo apt install nginx -y
+
+        4. Start the Nginx service:
+            Bash: 
+                sudo systemctl start nginx
+        
+        5. Enable Nginx to start automatically on boot:
+            Bash: 
+                sudo systemctl enable nginx
+
+        6. Test and reload the nginx
+            Bash:
+                sudo nginx -t
+                sudo systemctl reload nginx
+
+        7. Main Configuration 
+            /etc/nginx/
+                This is the central hub for all Nginx configuration files.
+                * nginx.conf: This is the main Nginx configuration file. It contains global settings and usually includes other configuration files from subdirectories
+                    * To view its content: sudo cat /etc/nginx/nginx.conf
+                * conf.d/: This directory is often used for small, modular configuration snippets. Many installations include an include /etc/nginx/conf.d/*.conf; directive in nginx.conf, meaning any .conf files placed here will be automatically loaded by Nginx.
+                * sites-available/: This directory is where you'll typically place your individual website (server block) configuration files. Files here are not active until they are symlinked to sites-enabled/.
+                    * Example: sudo nano /etc/nginx/sites-available/your_domain.conf
+                * sites-enabled/: This directory contains symbolic links to the configuration files in sites-available/ that you want to enable. Nginx loads configurations from this directory. 
+                    * To enable a site: sudo ln -s /etc/nginx/sites-available/your_domain.conf /etc/nginx/sites-enabled/
+                    * To disable a site: sudo rm /etc/nginx/sites-enabled/your_domain.conf (removes the symlink, not the original file).
+                * snippets/: (Sometimes present) This directory can contain reusable configuration snippets that you might include in multiple server blocks (e.g., SSL settings, common security headers).
+
+        8.  Default Web Root Directory (where your website files go): /var/www/html/
+            This is the default location where Nginx looks for HTML, CSS, JavaScript, images, and other static files to serve. When you visit your server's IP address, this is where Nginx serves the default "Welcome to Nginx!" page from.
+
+        9. Log Files Directory: /var/log/nginx/
+            * This directory contains Nginx's log files, which are crucial for monitoring and troubleshooting.
+            * access.log: Records all requests processed by Nginx. Useful for seeing who is accessing your site, what they are requesting, status codes, etc. 
+                * To view in real-time: sudo tail -f /var/log/nginx/access.log
+            * error.log: Records any errors Nginx encounters. Essential for debugging configuration issues, permissions problems, or other server-side errors. 
+                * To view in real-time: sudo tail -f /var/log/nginx/error.log
+
+        10. Nginx Executable: /usr/sbin/nginx
+            * This is the actual Nginx binary that runs the server. You typically interact with it via systemctl commands (e.g., sudo systemctl start nginx), but you can also run it directly for specific tasks like testing configuration:
+                * To confirm its location: which nginx (or whereis nginx)
+                * To test configuration: sudo /usr/sbin/nginx -t
+
+        11. Clone the GitHub Repository
+            First, ensure git is installed.
+            Base: 
+                sudo apt update
+                sudo apt install git -y
+            cd /var/www/html
+            git clone https://github.com/ajayvishwakarma457/Nginx-Aws.git
+        
+        12. Create a new Nginx config file
+            Bash: 
+                sudo nano /etc/nginx/sites-available/nginx-aws
+        
+        13. Paste the configuration
+            server {
+                listen 80;
+                server_name 65.1.2.205;
+
+                location / {
+                    proxy_pass http://localhost:3000;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection 'upgrade';
+                    proxy_set_header Host $host;
+                    proxy_cache_bypass $http_upgrade;
+                }
+            }
+
+
+        14. Enable the site
+            Create a symlink from sites-available to sites-enabled: 
+                Bash: 
+                    sudo ln -s /etc/nginx/sites-available/nginx-aws /etc/nginx/sites-enabled/
+
+        15. Reload Nginx
+            Bash:
+                sudo nginx -t
+                sudo systemctl reload nginx
+
+
+
+
